@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const Navbar = () => {
   return (
     <nav className="w-full bg-white shadow-md sticky top-0 z-50">
-      <div className="max-w-[1280px] mx-auto flex items-center justify-between py-3 px-4">
+      <div className="max-w mx-auto flex items-center justify-between py-3 px-4">
         <Link to="/" className="text-2xl font-bold text-blue-600">
           ScholarStream
         </Link>
