@@ -11,19 +11,19 @@ const Navbar = () => {
 
         <ul className="hidden md:flex gap-6 text-gray-700 font-medium">
           <li>
-            <Link to="/" className="hover:text-blue-600">Home</Link>
+            <Link to="/" className="hover:text-blue-600 font-bold">Home</Link>
           </li>
           <li>
-            <Link to="/" className="hover:text-blue-600">All Scholarships</Link>
+            <Link to="/" className="hover:text-blue-600 font-bold">All Scholarships</Link>
           </li>
         </ul>
 
         <div className="hidden md:flex gap-3">
           <Link to="/login">
-            <button className="btn btn-outline btn-sm">Student Login</button>
+            <button className="btn btn-outline btn-sm bg-blue-600 text-white hover:bg-blue-700">Student Login</button>
           </Link>
           <Link to="/register">
-            <button className="btn btn-outline btn-sm">Student Register</button>
+            <button className="btn btn-outline btn-sm bg-blue-600 text-white hover:bg-blue-700">Student Register</button>
           </Link>
         </div>
       </div>

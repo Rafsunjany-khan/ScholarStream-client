@@ -1,16 +1,23 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Banner from "./components/Banner";
-import Footer from "./components/Footer";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
+import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
+import Footer from "./components/Footer";
+import Register from "./authentication/Register";
 
 function App() {
   return (
     <Router>
       <div className="flex flex-col min-h-screen">
+       <ToastContainer position="top-right" autoClose={3000} />
         <Navbar />
-        <Banner />
+        <Routes>
+          <Route path="/register" element={<Register />} />
+          <Route path="/" element={<Home />} />
+        </Routes>
         <Footer />
       </div>
     </Router>
