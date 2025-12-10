@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "./firebase";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { FcGoogle } from "react-icons/fc";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -11,7 +12,9 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const googleProvider = new GoogleAuthProvider();
 
+  // Email login
   const handleEmailLogin = async (e) => {
     e.preventDefault();
 
@@ -43,6 +46,37 @@ const Login = () => {
     setLoading(false);
   };
 
+  // Google login
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+      // Save user in MongoDB
+      await axios.post("http://localhost:5000/api/users/register", {
+        uid: user.uid,
+        name: user.displayName,
+        email: user.email,
+        photoURL: user.photoURL,
+        role: "Student",
+      });
+
+      const { data } = await axios.post("http://localhost:5000/api/users/login", {
+        uid: user.uid,
+      });
+
+      toast.success(`Logged in as ${user.displayName}`);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message || "Google login failed.");
+    }
+    setLoading(false);
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
       <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-8">
@@ -70,6 +104,15 @@ const Login = () => {
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
+
+        <div className="mt-6">
+          <button
+            onClick={handleGoogleLogin}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-3 border border-gray-400 py-2 rounded hover:bg-gray-100 transition font-semibold" >
+            <FcGoogle size={24} /> Continue with Google
+          </button>
+        </div>
 
         <p className="text-sm text-gray-600 text-center mt-4">
           Don’t have an account?{" "}
