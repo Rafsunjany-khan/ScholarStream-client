@@ -4,13 +4,15 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import AllScholarships from "./pages/AllScholarships";
 import ScholarshipDetails from "./pages/ScholarshipDetails";
-import StudentDashboard from "./pages/StudentDashboard";
-import Footer from "./components/Footer";
 import Register from "./authentication/Register";
 import Login from "./authentication/Login";
+
+import DashboardLayout from "./pages/DashboardLayout";
+import StudentDashboard from "./pages/StudentDashboard";
 
 function App() {
   const [currentUser, setCurrentUser] = useState(() => {
@@ -25,17 +27,16 @@ function App() {
 
         <Routes>
           <Route path="/register" element={<Register />} />
-          <Route path="/login"  element={<Login setCurrentUser={setCurrentUser} />} />
+          <Route path="/login" element={<Login setCurrentUser={setCurrentUser} />} />
           <Route path="/" element={<Home />} />
           <Route path="/scholarships" element={<AllScholarships />} />
           <Route path="/scholarship/:id" element={<ScholarshipDetails />} />
 
-
-          <Route
-            path="/dashboard"
-            element={
-              currentUser ? (
-                <StudentDashboard currentUser={currentUser} />
+          <Route path="/dashboard" element={currentUser ? (<DashboardLayout currentUser={currentUser}>
+                  {currentUser.role === "Student" && (
+                    <StudentDashboard currentUser={currentUser} />
+                  )}
+                </DashboardLayout>
               ) : (
                 <Navigate to="/login" />
               )
