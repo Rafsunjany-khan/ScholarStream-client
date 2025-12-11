@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 
-const Login = () => {
+const Login = ({ setCurrentUser }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -36,8 +36,8 @@ const Login = () => {
       toast.success(`Welcome back, ${data.user.name || user.email}!`);
 
       localStorage.setItem("user", JSON.stringify(data.user));
-
-      navigate("/");
+      setCurrentUser(data.user);
+      navigate("/dashboard");
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || error.message || "Login failed");
