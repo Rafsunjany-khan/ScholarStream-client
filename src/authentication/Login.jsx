@@ -37,7 +37,7 @@ const Login = ({ setCurrentUser }) => {
 
       localStorage.setItem("user", JSON.stringify(data.user));
       setCurrentUser(data.user);
-      navigate("/user-management");
+      navigate("/dashboard");
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || error.message || "Login failed");
