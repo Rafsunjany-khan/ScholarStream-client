@@ -13,6 +13,7 @@ import Login from "./authentication/Login";
 
 import DashboardLayout from "./pages/DashboardLayout";
 import StudentDashboard from "./pages/StudentDashboard";
+import UserManagement from "./components/UserManagement";
 
 function App() {
   const [currentUser, setCurrentUser] = useState(() => {
@@ -32,9 +33,9 @@ function App() {
           <Route path="/scholarships" element={<AllScholarships />} />
           <Route path="/scholarship/:id" element={<ScholarshipDetails />} />
 
-          <Route path="/dashboard" element={currentUser ? (<DashboardLayout currentUser={currentUser}>
+          <Route path="/user-management" element={currentUser ? (<DashboardLayout currentUser={currentUser}>
                   {currentUser.role === "Student" && (
-                    <StudentDashboard currentUser={currentUser} />
+                    <UserManagement currentUser={currentUser} />
                   )}
                 </DashboardLayout>
               ) : (

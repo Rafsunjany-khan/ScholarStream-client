@@ -37,7 +37,7 @@ const Login = ({ setCurrentUser }) => {
 
       localStorage.setItem("user", JSON.stringify(data.user));
       setCurrentUser(data.user);
-      navigate("/dashboard");
+      navigate("/user-management");
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || error.message || "Login failed");
@@ -69,7 +69,7 @@ const Login = ({ setCurrentUser }) => {
       toast.success(`Logged in as ${user.displayName}`);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       console.error(error);
       toast.error(error.message || "Google login failed.");
