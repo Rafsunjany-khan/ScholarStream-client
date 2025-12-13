@@ -3,9 +3,12 @@ import { Link, Routes, Route, Navigate } from "react-router-dom";
 import { FaUser, FaClipboardList, FaUsers, FaPlusCircle, FaTasks } from "react-icons/fa";
 
 import StudentDashboard from "./student/StudentDashboard";
+
 import AdminDashboard from "./admin/AdminDashboard";
-import UserManagement from "./admin/UserManagement";
 import AddScholarship from "./admin/AddScholarship";
+import ManageScholarships from "./admin/ManageScholarships";
+import UserManagement from "./admin/UserManagement";
+
 import ModeratorDashboard from "./moderator/ModeratorDashboard";
 
 const DashboardLayout = ({ currentUser }) => {
@@ -68,8 +71,9 @@ const DashboardLayout = ({ currentUser }) => {
           {currentUser.role === "Admin" && (
             <>
               <Route path="admin" element={<AdminDashboard />} />
-              <Route path="admin/UserManagement" element={<UserManagement currentAdmin={currentUser} />} />
               <Route path="admin/addscholarship" element={<AddScholarship currentAdmin={currentUser} />} />
+              <Route path="admin/managescholarship" element={<ManageScholarships currentAdmin={currentUser} />} />
+              <Route path="admin/UserManagement" element={<UserManagement currentAdmin={currentUser} />} />
               <Route path="" element={<Navigate to="admin" replace />} />
             </>
           )}
