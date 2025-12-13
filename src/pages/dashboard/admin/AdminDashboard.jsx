@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import UserManagement from "./UserManagement";
 
 const AdminDashboard = () => {
   const [totalUsers, setTotalUsers] = useState(0);
@@ -34,24 +32,17 @@ const AdminDashboard = () => {
   }
 
   return (
-    <Routes>
-      <Route index
-        element={
-          <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-lg shadow p-6 text-center">
-              <h2 className="text-xl font-semibold mb-2">Total Users</h2>
-              <p className="text-3xl font-bold text-blue-600">{totalUsers}</p>
-            </div>
+    <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="bg-white rounded-lg shadow p-6 text-center">
+        <h2 className="text-xl font-semibold mb-2">Total Users</h2>
+        <p className="text-3xl font-bold text-blue-600">{totalUsers}</p>
+      </div>
 
-            <div className="bg-white rounded-lg shadow p-6 text-center">
-              <h2 className="text-xl font-semibold mb-2">Total Scholarships</h2>
-              <p className="text-3xl font-bold text-green-600">{totalScholarships}</p>
-            </div>
-          </div>
-        }/>
-
-      <Route path="UserManagement" element={<UserManagement currentAdmin={{ role: "Admin" }} />} />
-    </Routes>
+      <div className="bg-white rounded-lg shadow p-6 text-center">
+        <h2 className="text-xl font-semibold mb-2">Total Scholarships</h2>
+        <p className="text-3xl font-bold text-green-600">{totalScholarships}</p>
+      </div>
+    </div>
   );
 };
 
