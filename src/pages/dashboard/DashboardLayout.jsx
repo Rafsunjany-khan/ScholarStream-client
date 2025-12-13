@@ -5,6 +5,7 @@ import { FaUser, FaClipboardList, FaUsers, FaPlusCircle, FaTasks } from "react-i
 import StudentDashboard from "./student/StudentDashboard";
 import AdminDashboard from "./admin/AdminDashboard";
 import UserManagement from "./admin/UserManagement";
+import AddScholarship from "./admin/AddScholarship";
 import ModeratorDashboard from "./moderator/ModeratorDashboard";
 
 const DashboardLayout = ({ currentUser }) => {
@@ -68,6 +69,7 @@ const DashboardLayout = ({ currentUser }) => {
             <>
               <Route path="admin" element={<AdminDashboard />} />
               <Route path="admin/UserManagement" element={<UserManagement currentAdmin={currentUser} />} />
+              <Route path="admin/addscholarship" element={<AddScholarship currentAdmin={currentUser} />} />
               <Route path="" element={<Navigate to="admin" replace />} />
             </>
           )}
