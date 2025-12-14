@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, Routes, Route, Navigate } from "react-router-dom";
+import { Link, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { FaUser, FaClipboardList, FaUsers, FaPlusCircle, FaTasks } from "react-icons/fa";
 
 import StudentDashboard from "./student/StudentDashboard";
@@ -13,8 +13,18 @@ import ModeratorDashboard from "./moderator/ModeratorDashboard";
 
 const DashboardLayout = ({ currentUser }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const navigate = useNavigate();
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
+
+  if (!currentUser) {
+    return <Navigate to="/login" replace />;
+  }
 
   const links = {
     Student: [
@@ -36,9 +46,9 @@ const DashboardLayout = ({ currentUser }) => {
   return (
     <div className="flex min-h-screen bg-gray-100">
       <aside
-        className={`bg-white shadow-lg transition-all duration-300 p-6 ${
+        className={`bg-white shadow-lg transition-all duration-300 p-6 flex flex-col h-full ${
           isSidebarOpen ? "w-64" : "w-16"
-        }`}>
+        }`} >
         <button onClick={toggleSidebar} className="mb-6 text-gray-600 focus:outline-none">
           {isSidebarOpen ? "⬅" : "➡"}
         </button>
@@ -47,16 +57,20 @@ const DashboardLayout = ({ currentUser }) => {
           Dashboard
         </h2>
 
-        <nav className="flex flex-col gap-4">
+        <nav className="flex flex-col gap-4 flex-1">
           {links[currentUser.role]?.map((link) => (
-            <Link key={link.name}
-              to={link.path}
+            <Link key={link.name} to={link.path}
               className="flex items-center gap-3 text-gray-700 hover:text-blue-600 font-medium transition-colors">
               {link.icon}
               {isSidebarOpen && link.name}
             </Link>
           ))}
         </nav>
+
+        <button onClick={handleLogout}
+          className="mt-10 w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition">
+          Logout
+        </button>
       </aside>
 
       <main className="flex-1 p-6">
