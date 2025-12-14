@@ -11,6 +11,7 @@ import ScholarshipDetails from "./pages/ScholarshipDetails";
 import Register from "./authentication/Register";
 import Login from "./authentication/Login";
 import DashboardLayout from "./pages/dashboard/DashboardLayout";
+import PaymentPage from "./pages/PaymentPage";
 
 function App() {
   const [currentUser, setCurrentUser] = useState(() => {
@@ -43,7 +44,7 @@ function App() {
           element={
             <>
               <Navbar currentUser={currentUser} />
-              <ScholarshipDetails />
+              <ScholarshipDetails currentUser={currentUser}/>
               <Footer />
             </>
           }
@@ -62,6 +63,7 @@ function App() {
           }
         />
 
+        <Route path="/payment/:id" element={<PaymentPage />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>

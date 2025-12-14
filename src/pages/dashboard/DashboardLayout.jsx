@@ -3,6 +3,7 @@ import { Link, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { FaUser, FaClipboardList, FaUsers, FaPlusCircle, FaTasks, FaHome } from "react-icons/fa";
 
 import StudentDashboard from "./student/StudentDashboard";
+import MyApplications from "./student/MyApplications";
 
 import AdminDashboard from "./admin/AdminDashboard";
 import AddScholarship from "./admin/AddScholarship";
@@ -84,6 +85,7 @@ const DashboardLayout = ({ currentUser }) => {
           {currentUser.role === "Student" && (
             <>
               <Route path="profile" element={<StudentDashboard currentUser={currentUser} />} />
+              <Route path="student/myapplication" element={<MyApplications currentUser={currentUser} />} />
               <Route path="" element={<Navigate to="profile" replace />} />
             </>
           )}
