@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import { FaUser, FaClipboardList, FaUsers, FaPlusCircle, FaTasks } from "react-icons/fa";
+import { FaUser, FaClipboardList, FaUsers, FaPlusCircle, FaTasks, FaHome } from "react-icons/fa";
 
 import StudentDashboard from "./student/StudentDashboard";
 
@@ -49,18 +49,23 @@ const DashboardLayout = ({ currentUser }) => {
         className={`bg-white shadow-lg transition-all duration-300 p-6 flex flex-col h-full ${
           isSidebarOpen ? "w-64" : "w-16"
         }`} >
+
         <button onClick={toggleSidebar} className="mb-6 text-gray-600 focus:outline-none">
           {isSidebarOpen ? "⬅" : "➡"}
         </button>
 
-        <h2 className={`text-xl font-bold mb-6 ${!isSidebarOpen && "hidden"}`}>
-          Dashboard
-        </h2>
+        <h2 className={`text-xl font-bold mb-6 ${!isSidebarOpen && "hidden"}`}> Dashboard </h2>
+        <Link to="/"  title="Home"
+          className="flex items-center gap-3 text-gray-700 hover:text-blue-600 font-medium transition-colors mb-4">
+          <FaHome /> {isSidebarOpen && "Home"}
+        </Link>
 
         <nav className="flex flex-col gap-4 flex-1">
           {links[currentUser.role]?.map((link) => (
-            <Link key={link.name} to={link.path}
-              className="flex items-center gap-3 text-gray-700 hover:text-blue-600 font-medium transition-colors">
+            <Link key={link.name}
+              to={link.path}
+              title={link.name}
+              className="flex items-center gap-3 text-gray-700 hover:text-blue-600 font-medium transition-colors" >
               {link.icon}
               {isSidebarOpen && link.name}
             </Link>
@@ -68,8 +73,9 @@ const DashboardLayout = ({ currentUser }) => {
         </nav>
 
         <button onClick={handleLogout}
-          className="mt-10 w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition">
-          Logout
+          title="Logout"
+          className="mt-6 w-full bg-red-600 text-white py-2 px-0 rounded hover:bg-red-700 transition">
+          {isSidebarOpen ? "Logout" : "⏻"}
         </button>
       </aside>
 

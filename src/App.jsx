@@ -10,7 +10,6 @@ import AllScholarships from "./pages/AllScholarships";
 import ScholarshipDetails from "./pages/ScholarshipDetails";
 import Register from "./authentication/Register";
 import Login from "./authentication/Login";
-
 import DashboardLayout from "./pages/dashboard/DashboardLayout";
 
 function App() {
@@ -20,27 +19,51 @@ function App() {
 
   return (
     <Router>
-      <div className="flex flex-col min-h-screen">
-        <ToastContainer position="top-right" autoClose={3000} />
-        <Navbar currentUser={currentUser} />
+      <ToastContainer position="top-right" autoClose={3000} />
+      <Routes>
+        <Route path="/"
+          element={
+            <>
+              <Navbar currentUser={currentUser} />
+              <Home />
+              <Footer />
+            </>
+          }
+        />
+        <Route path="/scholarships"
+          element={
+            <>
+              <Navbar currentUser={currentUser} />
+              <AllScholarships />
+              <Footer />
+            </>
+          }
+        />
+        <Route path="/scholarship/:id"
+          element={
+            <>
+              <Navbar currentUser={currentUser} />
+              <ScholarshipDetails />
+              <Footer />
+            </>
+          }
+        />
+        <Route path="/login" element={<Login setCurrentUser={setCurrentUser} />} />
+        <Route path="/register" element={<Register />} />
 
-        <Routes>
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login setCurrentUser={setCurrentUser} />} />
-          <Route path="/" element={<Home />} />
-          <Route path="/scholarships" element={<AllScholarships />} />
-          <Route path="/scholarship/:id" element={<ScholarshipDetails />} />
+        <Route
+          path="/dashboard/*"
+          element={
+            currentUser ? (
+              <DashboardLayout currentUser={currentUser} />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
 
-          <Route path="/dashboard/*" element={currentUser ? (<DashboardLayout currentUser={currentUser} />
-              ) : (
-                <Navigate to="/login" />
-              )
-            } />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-
-        <Footer />
-      </div>
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
     </Router>
   );
 }
