@@ -6,6 +6,7 @@ const ManageScholarships = () => {
   const [scholarships, setScholarships] = useState([]);
   const [editingScholarship, setEditingScholarship] = useState(null);
   const [formData, setFormData] = useState({});
+  const [deletingScholarship, setDeletingScholarship] = useState(null);
 
   const fetchScholarships = async () => {
     try {
@@ -34,7 +35,6 @@ const ManageScholarships = () => {
     e.preventDefault();
     try {
       const { _id, ...updateData } = formData;
-
       await axios.put(`http://localhost:5000/api/scholarships/${editingScholarship._id}`, updateData);
       toast.success("Scholarship updated successfully");
       setEditingScholarship(null);
@@ -42,6 +42,17 @@ const ManageScholarships = () => {
     } catch (error) {
       console.error("Failed to update scholarship:", error);
       toast.error("Failed to update scholarship");
+    }
+  };
+
+  const handleDelete = async (scholarship) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/scholarships/${scholarship._id}`);
+      toast.success("Scholarship deleted successfully");
+      fetchScholarships();
+    } catch (error) {
+      console.error("Failed to delete scholarship:", error);
+      toast.error("Failed to delete scholarship");
     }
   };
 
@@ -67,11 +78,13 @@ const ManageScholarships = () => {
               <td className="p-2 border-b">{sch.universityCountry}</td>
               <td className="p-2 border-b">{sch.universityCity}</td>
               <td className="p-2 border-b flex gap-2">
-                <button onClick={() => handleEdit(sch)}
+                <button
+                  onClick={() => handleEdit(sch)}
                   className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">
                   Update
                 </button>
                 <button
+                  onClick={() => setDeletingScholarship(sch)}
                   className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded">
                   Delete
                 </button>
@@ -86,7 +99,6 @@ const ManageScholarships = () => {
           <div className="bg-white p-6 rounded-lg w-full max-w-3xl overflow-y-auto max-h-[90vh]">
             <h3 className="text-xl font-bold mb-4">Update Scholarship</h3>
             <form className="flex flex-col gap-3" onSubmit={handleUpdate}>
-
               <label>Scholarship Name:</label>
               <input type="text" name="scholarshipName" value={formData.scholarshipName} onChange={handleChange}
                 placeholder="Scholarship Name"
@@ -168,6 +180,29 @@ const ManageScholarships = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {deletingScholarship && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md text-center">
+            <h3 className="text-xl font-bold mb-4">
+              Are you sure you want to delete <br /> "{deletingScholarship.scholarshipName}"?
+            </h3>
+            <div className="flex justify-center gap-4 mt-4">
+              <button onClick={() => {
+                  handleDelete(deletingScholarship);
+                  setDeletingScholarship(null);
+                }}
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+                Yes
+              </button>
+              <button onClick={() => setDeletingScholarship(null)}
+                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
+                No
+              </button>
+            </div>
           </div>
         </div>
       )}
