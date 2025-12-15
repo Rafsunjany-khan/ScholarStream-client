@@ -18,7 +18,7 @@ const ScholarshipDetails = ({ currentUser }) => {
     try {
       await axios.post("http://localhost:5000/api/applications", {
           scholarshipId: scholarship._id,
-          userId: currentUser.userId || currentUser._id,
+          userId: currentUser.uid,
           userName: currentUser.name,
           userEmail: currentUser.email,
           universityName: scholarship.universityName,
