@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 const ScholarshipDetails = ({ currentUser }) => {
   const { id } = useParams();
