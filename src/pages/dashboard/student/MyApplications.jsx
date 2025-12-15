@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const MyApplications = ({ currentUser }) => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedApp, setSelectedApp] = useState(null);
+  const [selectedApp, setSelectedApp] = useState(null); // clicked application for modal
+  const [editingApp, setEditingApp] = useState(null); // editing application
+  const [editData, setEditData] = useState({ degree: "", scholarshipCategory: "" });
 
+  // Fetch all applications
   useEffect(() => {
     if (!currentUser?.email) {
       setLoading(false);
@@ -21,12 +26,38 @@ const MyApplications = ({ currentUser }) => {
       .catch(() => setLoading(false));
   }, [currentUser]);
 
+  const handleEditClick = (app) => {
+    setEditingApp(app);
+    setEditData({
+      degree: app.degree || "",
+      scholarshipCategory: app.scholarshipCategory || "",
+    });
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put(`http://localhost:5000/api/applications/${editingApp._id}`, editData);
+      setApplications((prev) =>
+        prev.map((app) =>
+          app._id === editingApp._id ? { ...app, ...editData } : app
+        )
+      );
+      setEditingApp(null);
+      toast.success("Application updated successfully!");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to update application");
+    }
+  };
+
   if (loading) return <p className="text-center mt-10">Loading applications...</p>;
   if (applications.length === 0)
     return <p className="text-center mt-10">No applications found.</p>;
 
   return (
     <div className="overflow-x-auto p-4">
+      <ToastContainer position="top-right" autoClose={3000} />
       <h2 className="text-2xl font-bold mb-4">My Applications</h2>
 
       <table className="min-w-full bg-white border border-gray-300">
@@ -54,17 +85,24 @@ const MyApplications = ({ currentUser }) => {
                   : "-"}
               </td>
               <td className="py-2 px-4 border">
-                {app.scholarshipDetails?.subjectCategory || "-"}
+                {app.degree || app.scholarshipDetails?.degree || "-"}
               </td>
               <td className="py-2 px-4 border">${app.applicationFees}</td>
               <td className="py-2 px-4 border capitalize">{app.applicationStatus}</td>
               <td className="py-2 px-4 border">{app.feedback || "-"}</td>
-              <td className="py-2 px-4 border">
+              <td className="py-2 px-4 border flex justify-center gap-2">
                 <button
                   onClick={() => setSelectedApp(app)}
                   className="px-3 py-1 bg-blue-500 text-white rounded">
                   Details
                 </button>
+                {app.applicationStatus === "pending" && (
+                  <button
+                    onClick={() => handleEditClick(app)}
+                    className="px-3 py-1 bg-green-500 text-white rounded">
+                    Edit
+                  </button>
+                )}
               </td>
             </tr>
           ))}
@@ -77,7 +115,7 @@ const MyApplications = ({ currentUser }) => {
             {selectedApp.scholarshipDetails ? (
               <>
                 <img src={selectedApp.scholarshipDetails.universityImage} alt="University"
-                  className="w-24 mx-auto mb-4"/>
+                  className="w-24 mx-auto mb-4" />
                 <h3 className="text-xl font-bold text-center mb-3">
                   {selectedApp.scholarshipDetails.scholarshipName}
                 </h3>
@@ -95,15 +133,12 @@ const MyApplications = ({ currentUser }) => {
                   {selectedApp.scholarshipDetails.universityWorldRank}
                 </p>
                 <p>
-                  <strong>Subject:</strong>{" "}
-                  {selectedApp.scholarshipDetails.subjectCategory}
-                </p>
-                <p>
-                  <strong>Degree:</strong> {selectedApp.degree}
+                  <strong>Degree:</strong>{" "}
+                  {selectedApp.degree || selectedApp.scholarshipDetails.degree || "-"}
                 </p>
                 <p>
                   <strong>Scholarship Type:</strong>{" "}
-                  {selectedApp.scholarshipDetails.scholarshipCategory}
+                  {selectedApp.scholarshipCategory || selectedApp.scholarshipDetails.scholarshipCategory}
                 </p>
                 <p>
                   <strong>Tuition Fees:</strong>{" "}
@@ -132,9 +167,50 @@ const MyApplications = ({ currentUser }) => {
 
             <button
               onClick={() => setSelectedApp(null)}
-              className="mt-4 px-4 py-2 bg-gray-600 text-white rounded">
+              className="mt-4 px-4 py-2 bg-gray-600 text-white rounded" >
               Close
             </button>
+          </div>
+        </div>
+      )}
+
+      {editingApp && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded w-full max-w-md max-h-[80vh] overflow-y-auto">
+            <h3 className="text-xl font-bold mb-4">Edit Application</h3>
+            <form onSubmit={handleEditSubmit} className="space-y-3">
+              <div>
+                <label className="block font-semibold">Degree</label>
+                <input type="text"
+                  value={editData.degree}
+                  className="w-full border px-2 py-1 rounded"
+                  onChange={(e) =>
+                    setEditData({ ...editData, degree: e.target.value })
+                  }
+                  required />
+              </div>
+              <div>
+                <label className="block font-semibold">Scholarship Category</label>
+                <input type="text"
+                  value={editData.scholarshipCategory}
+                  className="w-full border px-2 py-1 rounded"
+                  onChange={(e) =>
+                    setEditData({ ...editData, scholarshipCategory: e.target.value })
+                  }
+                  required />
+              </div>
+              <div className="flex justify-end gap-2 mt-3">
+                <button type="button"
+                  onClick={() => setEditingApp(null)}
+                  className="px-4 py-2 bg-gray-500 text-white rounded" >
+                  Cancel
+                </button>
+                <button type="submit"
+                  className="px-4 py-2 bg-green-500 text-white rounded" >
+                  Save
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
