@@ -55,6 +55,28 @@ const ModeratorDashboard = () => {
     }
   };
 
+  const handleStatusChange = async (id, newStatus) => {
+  try {
+    await axios.patch(
+      `http://localhost:5000/api/applications/${id}/status`,
+      { status: newStatus }
+    );
+
+    setApplications((prev) =>
+      prev.map((app) =>
+        app._id === id
+          ? { ...app, applicationStatus: newStatus }
+          : app
+      )
+    );
+
+    toast.success("Application status updated");
+  } catch (error) {
+    toast.error("Failed to update status");
+  }
+ };
+
+
   if (loading) return <p className="text-center mt-10">Loading applications...</p>;
   if (applications.length === 0)
     return <p className="text-center mt-10">No applications found.</p>;
@@ -90,6 +112,14 @@ const ModeratorDashboard = () => {
                   className="px-3 py-1 bg-blue-500 text-white rounded" >
                   Details
                 </button>
+                <select value={app.applicationStatus}
+                  onChange={(e) => handleStatusChange(app._id, e.target.value)}
+                  className="border px-2 py-1 rounded text-sm">
+                    <option value="pending">Pending</option>
+                    <option value="processing">Processing</option>
+                    <option value="completed">Completed</option>
+                </select>
+
                 <button onClick={() => { setFeedbackApp(app); setFeedbackText(app.feedback || ""); }}
                   className="px-3 py-1 bg-green-600 text-white rounded">
                   Feedback
