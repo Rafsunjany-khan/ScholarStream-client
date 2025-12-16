@@ -11,6 +11,7 @@ import ManageScholarships from "./admin/ManageScholarships";
 import UserManagement from "./admin/UserManagement";
 
 import ModeratorDashboard from "./moderator/ModeratorDashboard";
+import ManageApplications from "./moderator/ManageApplications";
 
 const DashboardLayout = ({ currentUser }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -102,10 +103,12 @@ const DashboardLayout = ({ currentUser }) => {
 
           {currentUser.role === "Moderator" && (
             <>
-              <Route path="moderator/*" element={<ModeratorDashboard currentModerator={currentUser} />} />
-              <Route path="" element={<Navigate to="moderator/" replace />} />
+              <Route path="moderator/profile" element={<ModeratorDashboard currentModerator={currentUser} />} />
+              <Route path="moderator/applications" element={<ManageApplications currentModerator={currentUser} />} />
+              <Route path="" element={<Navigate to="moderator/profile" replace />} />
             </>
           )}
+
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
