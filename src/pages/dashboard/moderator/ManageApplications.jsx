@@ -6,7 +6,9 @@ import "react-toastify/dist/ReactToastify.css";
 const ModeratorDashboard = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedApp, setSelectedApp] = useState(null); // for details modal
+  const [selectedApp, setSelectedApp] = useState(null);
+  const [feedbackApp, setFeedbackApp] = useState(null);
+  const [feedbackText, setFeedbackText] = useState("");
 
   // Fetch all applications
   useEffect(() => {
@@ -24,6 +26,34 @@ const ModeratorDashboard = () => {
 
     fetchApplications();
   }, []);
+
+  //Feedback functionality
+  const handleFeedbackSubmit = async () => {
+    if (!feedbackText.trim()) {
+      return toast.warning("Feedback cannot be empty.");
+    }
+
+    try {
+      await axios.patch(
+        `http://localhost:5000/api/applications/${feedbackApp._id}/feedback`,
+        { feedback: feedbackText }
+      );
+
+      setApplications((prev) =>
+        prev.map((app) =>
+          app._id === feedbackApp._id
+            ? { ...app, feedback: feedbackText }
+            : app
+        )
+      );
+
+      toast.success("Feedback submitted successfully!");
+      setFeedbackApp(null);
+      setFeedbackText("");
+    } catch (error) {
+      toast.error("Failed to submit feedback.");
+    }
+  };
 
   if (loading) return <p className="text-center mt-10">Loading applications...</p>;
   if (applications.length === 0)
@@ -59,6 +89,10 @@ const ModeratorDashboard = () => {
                 <button onClick={() => setSelectedApp(app)}
                   className="px-3 py-1 bg-blue-500 text-white rounded" >
                   Details
+                </button>
+                <button onClick={() => { setFeedbackApp(app); setFeedbackText(app.feedback || ""); }}
+                  className="px-3 py-1 bg-green-600 text-white rounded">
+                  Feedback
                 </button>
               </td>
             </tr>
@@ -97,6 +131,32 @@ const ModeratorDashboard = () => {
           </div>
         </div>
       )}
+
+      {feedbackApp && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded w-full max-w-md">
+            <h3 className="text-lg font-bold mb-3 text-center"> Write Feedback </h3>
+
+            <textarea rows="5"
+              placeholder="Write application feedback..."
+              value={feedbackText}
+              onChange={(e) => setFeedbackText(e.target.value)}
+              className="w-full border p-2 rounded" />
+
+            <div className="flex justify-end gap-3 mt-4">
+              <button onClick={() => setFeedbackApp(null)}
+                className="px-4 py-2 bg-gray-500 text-white rounded" >
+                Cancel
+              </button>
+              <button onClick={handleFeedbackSubmit}
+                className="px-4 py-2 bg-green-600 text-white rounded" >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
