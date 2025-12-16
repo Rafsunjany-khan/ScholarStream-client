@@ -8,6 +8,7 @@ const ModeratorDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [selectedApp, setSelectedApp] = useState(null);
   const [feedbackApp, setFeedbackApp] = useState(null);
+  const [cancelApp, setCancelApp] = useState(null);
   const [feedbackText, setFeedbackText] = useState("");
 
   // Fetch all applications
@@ -76,6 +77,30 @@ const ModeratorDashboard = () => {
   }
  };
 
+ //Cancel functionality
+ const handleCancelConfirm = async () => {
+  try {
+    await axios.patch(
+      `http://localhost:5000/api/applications/${cancelApp._id}/status`,
+      { status: "rejected" }
+    );
+
+    setApplications((prev) =>
+      prev.map((app) =>
+        app._id === cancelApp._id ? { ...app, applicationStatus: "rejected" } : app
+      )
+    );
+
+    toast.success("Application rejected successfully");
+    setCancelApp(null);
+  } catch (error) {
+    toast.error("Failed to reject application");
+  }
+ };
+
+
+
+
 
   if (loading) return <p className="text-center mt-10">Loading applications...</p>;
   if (applications.length === 0)
@@ -119,11 +144,15 @@ const ModeratorDashboard = () => {
                     <option value="processing">Processing</option>
                     <option value="completed">Completed</option>
                 </select>
-
                 <button onClick={() => { setFeedbackApp(app); setFeedbackText(app.feedback || ""); }}
                   className="px-3 py-1 bg-green-600 text-white rounded">
                   Feedback
                 </button>
+                <button onClick={() => setCancelApp(app)}
+                 className="px-3 py-1 bg-red-600 text-white rounded">
+                  Cancel
+                </button>
+
               </td>
             </tr>
           ))}
@@ -186,6 +215,27 @@ const ModeratorDashboard = () => {
           </div>
         </div>
       )}
+
+      {cancelApp && (
+  <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded w-full max-w-md text-center">
+      <p className="mb-4 text-lg">
+        Are you sure you want to reject the application for <strong>{cancelApp.scholarshipDetails?.universityName || cancelApp.universityName}</strong>?
+      </p>
+      <div className="flex justify-center gap-4">
+        <button onClick={handleCancelConfirm}
+          className="px-4 py-2 bg-red-500 text-white rounded">
+          Yes
+        </button>
+        <button onClick={() => setCancelApp(null)}
+          className="px-4 py-2 bg-gray-500 text-white rounded">
+          No
+        </button>
+      </div>
+    </div>
+  </div>
+  )}
+
 
     </div>
   );
