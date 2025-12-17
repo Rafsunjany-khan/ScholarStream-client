@@ -29,7 +29,7 @@ const Login = ({ setCurrentUser }) => {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      const { data } = await axios.post("http://localhost:5000/api/users/login", {
+      const { data } = await axios.post("https://scholarstream.onrender.com/api/users/login", {
         uid: user.uid,
       });
 
@@ -54,7 +54,7 @@ const Login = ({ setCurrentUser }) => {
       const user = result.user;
 
       // Save user in MongoDB
-      await axios.post("http://localhost:5000/api/users/register", {
+      await axios.post("https://scholarstream.onrender.com/api/users/register", {
         uid: user.uid,
         name: user.displayName,
         email: user.email,
@@ -62,7 +62,7 @@ const Login = ({ setCurrentUser }) => {
         role: "Student",
       });
 
-      const { data } = await axios.post("http://localhost:5000/api/users/login", {
+      const { data } = await axios.post("https://scholarstream.onrender.com/api/users/login", {
         uid: user.uid,
       });
 

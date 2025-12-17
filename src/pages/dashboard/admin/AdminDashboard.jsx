@@ -20,11 +20,11 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const usersRes = await axios.get("http://localhost:5000/api/users");
+        const usersRes = await axios.get("https://scholarstream.onrender.com/api/users");
         setTotalUsers(usersRes.data.users?.length || 0);
 
         const scholarshipRes = await axios.get(
-          "http://localhost:5000/api/scholarships"
+          "https://scholarstream.onrender.com/api/scholarships"
         );
         const scholarships = scholarshipRes.data.data || [];
         setTotalScholarships(scholarships.length);

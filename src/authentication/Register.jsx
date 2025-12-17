@@ -46,7 +46,7 @@ const Register = () => {
 
       await updateProfile(user, { displayName: name, photoURL: photoURL });
 
-      await axios.post("http://localhost:5000/api/users/register", {
+      await axios.post("https://scholarstream.onrender.com/api/users/register", {
         uid: user.uid,
         name,
         email,

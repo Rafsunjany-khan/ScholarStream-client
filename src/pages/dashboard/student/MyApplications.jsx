@@ -19,7 +19,7 @@ const MyApplications = ({ currentUser }) => {
     }
 
     axios
-      .get(`http://localhost:5000/api/applications/user/${currentUser.email}`)
+      .get(`https://scholarstream.onrender.com/api/applications/user/${currentUser.email}`)
       .then((res) => {
         setApplications(res.data);
         setLoading(false);
@@ -39,7 +39,7 @@ const MyApplications = ({ currentUser }) => {
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:5000/api/applications/${editingApp._id}`, editData);
+      await axios.put(`https://scholarstream.onrender.com/api/applications/${editingApp._id}`, editData);
       setApplications((prev) =>
         prev.map((app) =>
           app._id === editingApp._id ? { ...app, ...editData } : app
@@ -56,7 +56,7 @@ const MyApplications = ({ currentUser }) => {
   // Delete functionality
   const handleDeleteConfirm = async () => {
     try {
-      await axios.delete(`http://localhost:5000/api/applications/${deleteApp._id}`);
+      await axios.delete(`https://scholarstream.onrender.com/api/applications/${deleteApp._id}`);
       setApplications((prev) => prev.filter((app) => app._id !== deleteApp._id));
       toast.success("Application deleted successfully");
       setDeleteApp(null);

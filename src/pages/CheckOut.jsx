@@ -22,7 +22,7 @@ const CheckoutForm = ({ application, scholarship }) => {
 
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/payment/create-payment-intent",
+        "https://scholarstream.onrender.com/api/payment/create-payment-intent",
         { amount }
       );
 
@@ -35,7 +35,7 @@ const CheckoutForm = ({ application, scholarship }) => {
 
       if (paymentResult.error) {
         await axios.post(
-          "http://localhost:5000/api/payment/confirm-payment",
+          "https://scholarstream.onrender.com/api/payment/confirm-payment",
           {
             applicationId: application._id,
             paymentStatus: "unpaid",
@@ -53,7 +53,7 @@ const CheckoutForm = ({ application, scholarship }) => {
 
       if (paymentResult.paymentIntent.status === "succeeded") {
         const res = await axios.post(
-          "http://localhost:5000/api/payment/confirm-payment",
+          "https://scholarstream.onrender.com/api/payment/confirm-payment",
           {
             applicationId: application._id,
             paymentStatus: "paid",

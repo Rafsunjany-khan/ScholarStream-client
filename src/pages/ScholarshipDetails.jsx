@@ -24,7 +24,7 @@ const ScholarshipDetails = ({ currentUser }) => {
     setApplying(true);
 
     try {
-      const { data } = await axios.post("http://localhost:5000/api/applications", {
+      const { data } = await axios.post("https://scholarstream.onrender.com/api/applications", {
         scholarshipId: scholarship._id,
         userId: currentUser.uid,
         userName: currentUser.name,
@@ -59,7 +59,7 @@ const ScholarshipDetails = ({ currentUser }) => {
   useEffect(() => {
     const fetchScholarship = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:5000/api/scholarships/${id}`);
+        const { data } = await axios.get(`https://scholarstream.onrender.com/api/scholarships/${id}`);
         setScholarship(data.data);
       } catch (error) {
         console.error(error);

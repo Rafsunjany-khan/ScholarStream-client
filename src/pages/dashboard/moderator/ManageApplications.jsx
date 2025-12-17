@@ -15,7 +15,7 @@ const ModeratorDashboard = () => {
   useEffect(() => {
     const fetchApplications = async () => {
       try {
-        const { data } = await axios.get("http://localhost:5000/api/applications");
+        const { data } = await axios.get("https://scholarstream.onrender.com/api/applications");
         setApplications(data);
       } catch (error) {
         console.error(error);
@@ -36,7 +36,7 @@ const ModeratorDashboard = () => {
 
     try {
       await axios.patch(
-        `http://localhost:5000/api/applications/${feedbackApp._id}/feedback`,
+        `https://scholarstream.onrender.com/api/applications/${feedbackApp._id}/feedback`,
         { feedback: feedbackText }
       );
 
@@ -59,7 +59,7 @@ const ModeratorDashboard = () => {
   const handleStatusChange = async (id, newStatus) => {
   try {
     await axios.patch(
-      `http://localhost:5000/api/applications/${id}/status`,
+      `https://scholarstream.onrender.com/api/applications/${id}/status`,
       { status: newStatus }
     );
 
@@ -81,7 +81,7 @@ const ModeratorDashboard = () => {
  const handleCancelConfirm = async () => {
   try {
     await axios.patch(
-      `http://localhost:5000/api/applications/${cancelApp._id}/status`,
+      `https://scholarstream.onrender.com/api/applications/${cancelApp._id}/status`,
       { status: "rejected" }
     );
 

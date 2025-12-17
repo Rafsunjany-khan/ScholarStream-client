@@ -12,7 +12,7 @@ const UserManagement = ({ currentAdmin }) => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/users");
+      const res = await axios.get("https://scholarstream.onrender.com/api/users");
       setUsers(res.data.users || []);
     } catch (error) {
       console.error(error.response?.data || error.message);
@@ -27,7 +27,7 @@ const UserManagement = ({ currentAdmin }) => {
   const handleRoleChange = async (userUid, newRole) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/users/update-role/${userUid}`,
+        `https://scholarstream.onrender.com/api/users/update-role/${userUid}`,
         {
           role: newRole,
           adminUid: currentAdmin.uid,
@@ -44,7 +44,7 @@ const UserManagement = ({ currentAdmin }) => {
   const handleDeleteUser = async () => {
     try {
       await axios.delete(
-       `http://localhost:5000/api/users/${deleteUser.uid}?adminUid=${currentAdmin.uid}`
+       `https://scholarstream.onrender.com/api/users/${deleteUser.uid}?adminUid=${currentAdmin.uid}`
        );
 
       toast.success("User deleted successfully");

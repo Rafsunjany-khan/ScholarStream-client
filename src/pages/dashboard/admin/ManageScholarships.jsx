@@ -10,7 +10,7 @@ const ManageScholarships = () => {
 
   const fetchScholarships = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/scholarships");
+      const res = await axios.get("https://scholarstream.onrender.com/api/scholarships");
       setScholarships(res.data.data);
     } catch (error) {
       console.error(error);
@@ -35,7 +35,7 @@ const ManageScholarships = () => {
     e.preventDefault();
     try {
       const { _id, ...updateData } = formData;
-      await axios.put(`http://localhost:5000/api/scholarships/${editingScholarship._id}`, updateData);
+      await axios.put(`https://scholarstream.onrender.com/api/scholarships/${editingScholarship._id}`, updateData);
       toast.success("Scholarship updated successfully");
       setEditingScholarship(null);
       fetchScholarships();
@@ -47,7 +47,7 @@ const ManageScholarships = () => {
 
   const handleDelete = async (scholarship) => {
     try {
-      await axios.delete(`http://localhost:5000/api/scholarships/${scholarship._id}`);
+      await axios.delete(`https://scholarstream.onrender.com/api/scholarships/${scholarship._id}`);
       toast.success("Scholarship deleted successfully");
       fetchScholarships();
     } catch (error) {

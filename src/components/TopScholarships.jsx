@@ -10,7 +10,7 @@ const TopScholarships = () => {
   useEffect(() => {
     const fetchTopScholarships = async () => {
       try {
-        const { data } = await axios.get("http://localhost:5000/api/scholarships");
+        const { data } = await axios.get("https://scholarstream.onrender.com/api/scholarships");
 
         const sorted = data.data
           .sort((a, b) => {

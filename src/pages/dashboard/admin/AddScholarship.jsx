@@ -28,7 +28,7 @@ const AddScholarship = ({ currentAdmin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/scholarships", formData);
+      await axios.post("https://scholarstream.onrender.com/api/scholarships", formData);
       toast.success("Scholarship added successfully");
       setFormData({
         scholarshipName: "",

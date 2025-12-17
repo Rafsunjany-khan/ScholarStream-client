@@ -21,7 +21,7 @@ const AllScholarships = () => {
   useEffect(() => {
     const fetchScholarships = async () => {
       try {
-        const { data } = await axios.get("http://localhost:5000/api/scholarships");
+        const { data } = await axios.get("https://scholarstream.onrender.com/api/scholarships");
         setScholarships(data.data);
         setFiltered(data.data);
       } catch (error) {
@@ -34,7 +34,7 @@ const AllScholarships = () => {
 
     const fetchCategories = async () => {
       try {
-        const { data } = await axios.get("http://localhost:5000/api/scholarships/categories");
+        const { data } = await axios.get("https://scholarstream.onrender.com/api/scholarships/categories");
         if (data?.data && Array.isArray(data.data)) {
           setCategories(data.data);
         }
@@ -45,7 +45,7 @@ const AllScholarships = () => {
 
     const fetchSubjects = async () => {
       try {
-        const { data } = await axios.get("http://localhost:5000/api/scholarships/subjects");
+        const { data } = await axios.get("https://scholarstream.onrender.com/api/scholarships/subjects");
         if (data?.data && Array.isArray(data.data)) {
           setSubjects(data.data);
         }
@@ -56,7 +56,7 @@ const AllScholarships = () => {
 
     const fetchCountries = async () => {
       try {
-        const { data } = await axios.get("http://localhost:5000/api/scholarships/countries");
+        const { data } = await axios.get("https://scholarstream.onrender.com/api/scholarships/countries");
         if (data?.data && Array.isArray(data.data)) {
           setCountries(data.data);
         }
