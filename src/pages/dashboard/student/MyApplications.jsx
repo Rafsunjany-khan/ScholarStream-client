@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const MyApplications = ({ currentUser }) => {
+  const navigate = useNavigate();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedApp, setSelectedApp] = useState(null);
@@ -11,7 +13,6 @@ const MyApplications = ({ currentUser }) => {
   const [editData, setEditData] = useState({ degree: "", scholarshipCategory: "" });
   const [deleteApp, setDeleteApp] = useState(null);
 
-  // Fetch all applications
   useEffect(() => {
     if (!currentUser?.email) {
       setLoading(false);
@@ -27,7 +28,6 @@ const MyApplications = ({ currentUser }) => {
       .catch(() => setLoading(false));
   }, [currentUser]);
 
- //Edit functionality
   const handleEditClick = (app) => {
     setEditingApp(app);
     setEditData({
@@ -53,7 +53,6 @@ const MyApplications = ({ currentUser }) => {
     }
   };
 
-  // Delete functionality
   const handleDeleteConfirm = async () => {
     try {
       await axios.delete(`https://scholarstream.onrender.com/api/applications/${deleteApp._id}`);
@@ -117,6 +116,13 @@ const MyApplications = ({ currentUser }) => {
                       className="px-3 py-1 bg-green-500 text-white rounded">
                       Edit
                     </button>
+                    {app.paymentStatus === "unpaid" && (
+                      <button
+                        onClick={() => navigate("/checkout", { state: { application: app, scholarship: app.scholarshipDetails } })}
+                        className="px-3 py-1 bg-yellow-500 text-white rounded">
+                        Pay
+                      </button>
+                    )}
                     <button onClick={() => setDeleteApp(app)}
                       className="px-3 py-1 bg-red-500 text-white rounded">
                       Delete
