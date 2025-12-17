@@ -8,6 +8,7 @@ const ScholarshipDetails = ({ currentUser }) => {
   const navigate = useNavigate();
   const [scholarship, setScholarship] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [applying, setApplying] = useState(false);
 
   const handleApply = async () => {
     if (!currentUser || currentUser.role !== "Student") {
@@ -15,28 +16,43 @@ const ScholarshipDetails = ({ currentUser }) => {
       return;
     }
 
+    if (!scholarship) {
+      toast.error("Scholarship details not loaded yet.");
+      return;
+    }
+
+    setApplying(true);
+
     try {
-      await axios.post("http://localhost:5000/api/applications", {
-          scholarshipId: scholarship._id,
-          userId: currentUser.uid,
-          userName: currentUser.name,
-          userEmail: currentUser.email,
-          universityName: scholarship.universityName,
-          scholarshipCategory: scholarship.scholarshipCategory,
-          degree: scholarship.degree,
-          applicationFees: scholarship.applicationFees,
-          serviceCharge: scholarship.serviceCharge,
-          applicationStatus: "pending",
-          paymentStatus: "unpaid",
-          applicationDate: new Date().toISOString().split("T")[0],
-          feedback: "",
+      const { data } = await axios.post("http://localhost:5000/api/applications", {
+        scholarshipId: scholarship._id,
+        userId: currentUser.uid,
+        userName: currentUser.name,
+        userEmail: currentUser.email,
+        scholarshipName: scholarship.scholarshipName,
+        universityName: scholarship.universityName,
+        scholarshipCategory: scholarship.scholarshipCategory,
+        degree: scholarship.degree,
+        applicationFees: scholarship.applicationFees,
+        serviceCharge: scholarship.serviceCharge,
+        applicationStatus: "pending",
+        paymentStatus: "unpaid",
+        applicationDate: new Date().toISOString().split("T")[0],
+        feedback: "",
       });
 
-      toast.success("Application saved! Proceed to payment.");
-      navigate(`/payment/${scholarship._id}`);
+      const application = data.application;
+
+     toast.success("Application saved successfully! Redirecting to payment...", { autoClose: 1500 });
+     setTimeout(() => {
+       navigate("/checkout", { state: { application, scholarship } });
+     }, 1500);
+
     } catch (error) {
       console.error(error);
-      toast.error("Failed to save application.");
+      toast.error(error.response?.data?.message || "Failed to save application.");
+    } finally {
+      setApplying(false);
     }
   };
 
@@ -76,6 +92,7 @@ const ScholarshipDetails = ({ currentUser }) => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <ToastContainer position="top-right" autoClose={3000} />
       <div className="bg-white shadow rounded p-6 md:flex md:gap-6">
         <div className="md:w-1/3 mb-4 md:mb-0 flex items-center justify-center bg-gray-100 rounded overflow-hidden">
           <img src={scholarship.universityImage} alt={scholarship.universityName}
@@ -100,8 +117,9 @@ const ScholarshipDetails = ({ currentUser }) => {
 
           {currentUser && currentUser.role === "Student" ? (
             <button onClick={handleApply}
+              disabled={applying}
               className="mt-5 bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 font-semibold transition">
-              Apply for Scholarship
+              {applying ? "Processing..." : "Apply for Scholarship"}
             </button>
           ) : (
             <p className="mt-5 text-red-500 font-semibold">

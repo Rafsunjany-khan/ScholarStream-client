@@ -11,7 +11,9 @@ import ScholarshipDetails from "./pages/ScholarshipDetails";
 import Register from "./authentication/Register";
 import Login from "./authentication/Login";
 import DashboardLayout from "./pages/dashboard/DashboardLayout";
-import PaymentPage from "./pages/PaymentPage";
+import CheckOut from "./pages/CheckOut";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentFailed from "./pages/PaymentFailed";
 
 function App() {
   const [currentUser, setCurrentUser] = useState(() => {
@@ -22,7 +24,8 @@ function App() {
     <Router>
       <ToastContainer position="top-right" autoClose={3000} />
       <Routes>
-        <Route path="/"
+        <Route
+          path="/"
           element={
             <>
               <Navbar currentUser={currentUser} />
@@ -31,7 +34,9 @@ function App() {
             </>
           }
         />
-        <Route path="/scholarships"
+
+        <Route
+          path="/scholarships"
           element={
             <>
               <Navbar currentUser={currentUser} />
@@ -40,17 +45,39 @@ function App() {
             </>
           }
         />
-        <Route path="/scholarship/:id"
+
+        <Route
+          path="/scholarship/:id"
           element={
             <>
               <Navbar currentUser={currentUser} />
-              <ScholarshipDetails currentUser={currentUser}/>
+              <ScholarshipDetails currentUser={currentUser} />
               <Footer />
             </>
           }
         />
-        <Route path="/login" element={<Login setCurrentUser={setCurrentUser} />} />
-        <Route path="/register" element={<Register />} />
+
+        <Route
+          path="/login"
+          element={
+            <>
+              <Navbar currentUser={currentUser} />
+              <Login setCurrentUser={setCurrentUser} />
+              <Footer />
+            </>
+          }
+        />
+
+        <Route
+          path="/register"
+          element={
+            <>
+              <Navbar currentUser={currentUser} />
+              <Register />
+              <Footer />
+            </>
+          }
+        />
 
         <Route
           path="/dashboard/*"
@@ -63,7 +90,51 @@ function App() {
           }
         />
 
-        <Route path="/payment/:id" element={<PaymentPage />} />
+        <Route
+          path="/checkout"
+          element={
+            currentUser ? (
+              <>
+                <Navbar currentUser={currentUser} />
+                <CheckOut />
+                <Footer />
+              </>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+
+        <Route
+          path="/payment-success"
+          element={
+            currentUser ? (
+              <>
+                <Navbar currentUser={currentUser} />
+                <PaymentSuccess />
+                <Footer />
+              </>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+
+        <Route
+          path="/payment-failed"
+          element={
+            currentUser ? (
+              <>
+                <Navbar currentUser={currentUser} />
+                <PaymentFailed />
+                <Footer />
+              </>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
