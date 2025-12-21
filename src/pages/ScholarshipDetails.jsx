@@ -2,17 +2,26 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const ScholarshipDetails = ({ currentUser }) => {
+const ScholarshipDetails = ({ currentUser: propUser }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [scholarship, setScholarship] = useState(null);
   const [loading, setLoading] = useState(true);
   const [applying, setApplying] = useState(false);
+  const [currentUser, setCurrentUser] = useState(propUser || null);
+
+  useEffect(() => {
+    if (!propUser) {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) setCurrentUser(JSON.parse(storedUser));
+    }
+  }, [propUser]);
 
   const handleApply = async () => {
     if (!currentUser || currentUser.role !== "Student") {
-      toast.error("Please login as a student to apply.");
+      toast.error("Only students can apply.");
       return;
     }
 
@@ -21,33 +30,46 @@ const ScholarshipDetails = ({ currentUser }) => {
       return;
     }
 
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("No token found, please login again.");
+      return;
+    }
+
     setApplying(true);
 
     try {
-      const { data } = await axios.post("https://scholarstream.onrender.com/api/applications", {
-        scholarshipId: scholarship._id,
-        userId: currentUser.uid,
-        userName: currentUser.name,
-        userEmail: currentUser.email,
-        scholarshipName: scholarship.scholarshipName,
-        universityName: scholarship.universityName,
-        scholarshipCategory: scholarship.scholarshipCategory,
-        degree: scholarship.degree,
-        applicationFees: scholarship.applicationFees,
-        serviceCharge: scholarship.serviceCharge,
-        applicationStatus: "pending",
-        paymentStatus: "unpaid",
-        applicationDate: new Date().toISOString().split("T")[0],
-        feedback: "",
-      });
+      const { data } = await axios.post(
+        "https://scholarstream.onrender.com/api/applications",
+        {
+          scholarshipId: scholarship._id,
+          userId: currentUser.uid,
+          userName: currentUser.name,
+          userEmail: currentUser.email,
+          scholarshipName: scholarship.scholarshipName,
+          universityName: scholarship.universityName,
+          scholarshipCategory: scholarship.scholarshipCategory,
+          degree: scholarship.degree,
+          applicationFees: scholarship.applicationFees,
+          serviceCharge: scholarship.serviceCharge,
+          applicationStatus: "pending",
+          paymentStatus: "unpaid",
+          applicationDate: new Date().toISOString().split("T")[0],
+          feedback: "",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       const application = data.application;
 
-     toast.success("Application saved successfully! Redirecting to payment...", { autoClose: 1500 });
-     setTimeout(() => {
-       navigate("/checkout", { state: { application, scholarship } });
-     }, 1500);
-
+      toast.success("Application saved successfully! Redirecting to payment...", { autoClose: 1500 });
+      setTimeout(() => {
+        navigate("/checkout", { state: { application, scholarship } });
+      }, 1500);
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || "Failed to save application.");

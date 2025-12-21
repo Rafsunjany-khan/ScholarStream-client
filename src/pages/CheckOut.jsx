@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -13,17 +13,32 @@ const CheckoutForm = ({ application, scholarship }) => {
   const elements = useElements();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) setCurrentUser(JSON.parse(storedUser));
+  }, []);
+
+  const token = localStorage.getItem("token");
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
   const amount = application.applicationFees + application.serviceCharge;
 
   const handlePayNow = async () => {
+    if (!currentUser || currentUser.role !== "Student") {
+      toast.error("Only students can make payments.");
+      return;
+    }
+
     if (!stripe || !elements) return;
     setLoading(true);
 
     try {
       const { data } = await axios.post(
         "https://scholarstream.onrender.com/api/payment/create-payment-intent",
-        { amount }
+        { amount },
+        { headers }
       );
 
       const clientSecret = data.clientSecret;
@@ -39,7 +54,8 @@ const CheckoutForm = ({ application, scholarship }) => {
           {
             applicationId: application._id,
             paymentStatus: "unpaid",
-          }
+          },
+          { headers }
         );
 
         navigate("/payment-failed", {
@@ -57,7 +73,8 @@ const CheckoutForm = ({ application, scholarship }) => {
           {
             applicationId: application._id,
             paymentStatus: "paid",
-          }
+          },
+          { headers }
         );
 
         toast.success("Payment successful!");
@@ -78,8 +95,13 @@ const CheckoutForm = ({ application, scholarship }) => {
   };
 
   const handlePayLater = () => {
+    if (!currentUser || currentUser.role !== "Student") {
+      toast.error("Only students can make payments.");
+      return;
+    }
+
     toast.info("Application saved. You can pay later from your dashboard.");
-    navigate("/dashboard");
+    navigate("/dashboard/student/myapplication");
   };
 
   return (
@@ -93,14 +115,16 @@ const CheckoutForm = ({ application, scholarship }) => {
       </div>
 
       <div className="flex gap-4">
-        <button onClick={handlePayNow}
+        <button
+          onClick={handlePayNow}
           disabled={loading}
           className="bg-green-600 text-white px-6 py-3 rounded hover:bg-green-700 font-semibold transition">
           {loading ? "Processing..." : "Pay Now"}
         </button>
 
-        <button onClick={handlePayLater}
-          className="bg-gray-600 text-white px-6 py-3 rounded hover:bg-gray-700 font-semibold transition" >
+        <button
+          onClick={handlePayLater}
+          className="bg-gray-600 text-white px-6 py-3 rounded hover:bg-gray-700 font-semibold transition">
           Pay Later
         </button>
       </div>
@@ -125,10 +149,7 @@ const CheckOut = () => {
 
   return (
     <Elements stripe={stripePromise}>
-      <CheckoutForm
-        application={application}
-        scholarship={scholarship}
-      />
+      <CheckoutForm application={application} scholarship={scholarship} />
     </Elements>
   );
 };

@@ -10,9 +10,7 @@ const PaymentFailed = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h2 className="text-3xl font-bold mb-4 text-red-600">
-        Payment Failed
-      </h2>
+      <h2 className="text-3xl font-bold mb-4 text-red-600"> Payment Failed </h2>
 
       <div className="bg-white shadow rounded p-6 mb-6">
         <p>
@@ -27,7 +25,7 @@ const PaymentFailed = () => {
       </div>
 
       <button
-        onClick={() => navigate("/dashboard")}
+        onClick={() => navigate("/dashboard/student/myapplication")}
         className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 font-semibold">
         Return to Dashboard
       </button>

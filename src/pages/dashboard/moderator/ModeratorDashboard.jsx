@@ -1,35 +1,35 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { FaUser, FaEnvelope } from "react-icons/fa";
 
 const ModeratorDashboard = ({ currentModerator }) => {
   if (!currentModerator) {
-    return <p className="text-center mt-10">Loading moderator info...</p>;
+    return (
+      <div className="flex justify-center mt-20">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
   }
 
   return (
-    <Routes>
-      <Route
-        index
-        element={
-          <div className="bg-white p-8 rounded shadow-md w-full max-w-md mx-auto text-center">
-            <img
-              src={currentModerator.photoURL || "https://via.placeholder.com/150"}
-              alt={currentModerator.name}
-              className="w-24 h-24 rounded-full mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-2">{currentModerator.name}</h2>
-            <p className="text-gray-600 mb-1">{currentModerator.email}</p>
-            <p className="text-gray-500 font-medium">Role: {currentModerator.role}</p>
-          </div>
-        }/>
+    <div className="p-6 flex justify-center">
+      <div className="bg-base-100 shadow-lg rounded-lg p-8 text-center w-full max-w-sm">
+        <h2 className="text-2xl font-bold mb-6 border-b pb-2">Moderator</h2>
 
-      <Route path="applications"
-        element={
-          <div className="bg-white p-6 rounded shadow text-center">
-            <h2 className="text-2xl font-bold mb-4">Manage Applied Applications</h2>
-            <p className="text-gray-600">Applications management coming soon...</p>
-          </div>
-        }/>
-    </Routes>
+        <div className="flex justify-center mb-6">
+          <img src={currentModerator.photoURL}
+            alt={currentModerator.name || "Moderator"}
+            className="w-32 h-32 rounded-full border-4 border-primary"/>
+        </div>
+
+        <div className="flex items-center justify-center gap-3 text-lg font-semibold mb-3">
+          <FaUser className="text-primary" /> {currentModerator.name}
+        </div>
+
+        <div className="flex items-center justify-center gap-3 text-gray-600 text-sm">
+          <FaEnvelope className="text-gray-500" /> {currentModerator.email}
+        </div>
+      </div>
+    </div>
   );
 };
 

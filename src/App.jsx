@@ -14,6 +14,8 @@ import DashboardLayout from "./pages/dashboard/DashboardLayout";
 import CheckOut from "./pages/CheckOut";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentFailed from "./pages/PaymentFailed";
+import ErrorPage from "./pages/ErrorPage";
+
 
 function App() {
   const [currentUser, setCurrentUser] = useState(() => {
@@ -34,7 +36,6 @@ function App() {
             </>
           }
         />
-
         <Route
           path="/scholarships"
           element={
@@ -45,7 +46,6 @@ function App() {
             </>
           }
         />
-
         <Route
           path="/scholarship/:id"
           element={
@@ -56,7 +56,6 @@ function App() {
             </>
           }
         />
-
         <Route
           path="/login"
           element={
@@ -67,7 +66,6 @@ function App() {
             </>
           }
         />
-
         <Route
           path="/register"
           element={
@@ -78,7 +76,6 @@ function App() {
             </>
           }
         />
-
         <Route
           path="/dashboard/*"
           element={
@@ -89,7 +86,6 @@ function App() {
             )
           }
         />
-
         <Route
           path="/checkout"
           element={
@@ -104,7 +100,6 @@ function App() {
             )
           }
         />
-
         <Route
           path="/payment-success"
           element={
@@ -119,7 +114,6 @@ function App() {
             )
           }
         />
-
         <Route
           path="/payment-failed"
           element={
@@ -134,8 +128,16 @@ function App() {
             )
           }
         />
-
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route
+          path="*"
+          element={
+            <>
+              <Navbar currentUser={currentUser} />
+              <ErrorPage />
+              <Footer />
+            </>
+          }
+        />
       </Routes>
     </Router>
   );

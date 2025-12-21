@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { FaUser, FaUserShield, FaUserTie, FaTrash } from "react-icons/fa";
+import "react-toastify/dist/ReactToastify.css";
 
 const UserManagement = ({ currentAdmin }) => {
   const [users, setUsers] = useState([]);
@@ -9,11 +10,18 @@ const UserManagement = ({ currentAdmin }) => {
   const [deleteUser, setDeleteUser] = useState(null);
 
   const roles = ["Student", "Moderator", "Admin"];
+  const token = localStorage.getItem("token");
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("https://scholarstream.onrender.com/api/users");
-      setUsers(res.data.users || []);
+      const res = await axios.get(
+        "https://scholarstream.onrender.com/api/users",
+        { headers }
+      );
+
+      const userList = res.data.users || res.data.data || [];
+      setUsers(userList);
     } catch (error) {
       console.error(error.response?.data || error.message);
       toast.error("Failed to fetch users");
@@ -31,7 +39,8 @@ const UserManagement = ({ currentAdmin }) => {
         {
           role: newRole,
           adminUid: currentAdmin.uid,
-        }
+        },
+        { headers }
       );
       toast.success("Role updated successfully");
       fetchUsers();
@@ -44,8 +53,9 @@ const UserManagement = ({ currentAdmin }) => {
   const handleDeleteUser = async () => {
     try {
       await axios.delete(
-       `https://scholarstream.onrender.com/api/users/${deleteUser.uid}?adminUid=${currentAdmin.uid}`
-       );
+        `https://scholarstream.onrender.com/api/users/${deleteUser.uid}?adminUid=${currentAdmin.uid}`,
+        { headers }
+      );
 
       toast.success("User deleted successfully");
       setDeleteUser(null);
@@ -86,12 +96,13 @@ const UserManagement = ({ currentAdmin }) => {
 
   return (
     <div className="p-4">
+      <ToastContainer position="top-right" autoClose={3000} />
       <h2 className="text-2xl font-bold mb-6 text-center">User Management</h2>
       <div className="flex justify-end mb-4">
         <select
           value={filterRole}
           onChange={(e) => setFilterRole(e.target.value)}
-          className="border px-3 py-2 rounded">
+          className="border px-3 py-2 rounded" >
           <option value="All">All Roles</option>
           {roles.map((role) => (
             <option key={role} value={role}>
@@ -116,8 +127,7 @@ const UserManagement = ({ currentAdmin }) => {
           {filteredUsers.map((user) => (
             <tr key={user.uid} className="hover:bg-gray-100">
               <td>
-                <img src={user.photoURL || "https://via.placeholder.com/40"}
-                  alt={user.name}
+                <img src={user.photoURL} alt={user.name}
                   className="w-10 h-10 rounded-full mx-auto"/>
               </td>
               <td>{user.name}</td>
@@ -143,8 +153,7 @@ const UserManagement = ({ currentAdmin }) => {
 
               <td>
                 {currentAdmin?.role === "Admin" && (
-                  <button
-                    onClick={() => setDeleteUser(user)}
+                  <button onClick={() => setDeleteUser(user)}
                     className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded flex items-center gap-1 mx-auto">
                     <FaTrash /> Delete
                   </button>
@@ -163,17 +172,13 @@ const UserManagement = ({ currentAdmin }) => {
               <br />
               <span className="text-red-600">{deleteUser.name}</span>?
             </h3>
-            <p className="text-gray-600 mb-4">
-              This action cannot be undone.
-            </p>
+            <p className="text-gray-600 mb-4">This action cannot be undone.</p>
             <div className="flex justify-center gap-4">
-              <button
-                onClick={handleDeleteUser}
+              <button onClick={handleDeleteUser}
                 className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
                 Yes, Delete
               </button>
-              <button
-                onClick={() => setDeleteUser(null)}
+              <button onClick={() => setDeleteUser(null)}
                 className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
                 Cancel
               </button>

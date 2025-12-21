@@ -10,7 +10,14 @@ const TopScholarships = () => {
   useEffect(() => {
     const fetchTopScholarships = async () => {
       try {
-        const { data } = await axios.get("https://scholarstream.onrender.com/api/scholarships");
+        const token = localStorage.getItem("access-token");
+
+        const { data } = await axios.get(
+          "https://scholarstream.onrender.com/api/scholarships",
+          token
+            ? { headers: { Authorization: `Bearer ${token}` } }
+            : undefined
+        );
 
         const sorted = data.data
           .sort((a, b) => {
@@ -51,11 +58,10 @@ const TopScholarships = () => {
                 <span className="font-medium">Fees:</span> ${scholarship.applicationFees}
               </p>
             )}
-            <button
-                onClick={() => navigate(`/scholarship/${scholarship._id}`)}
-                className="mt-auto bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition font-semibold" >
-                View Details
-              </button>
+            <button onClick={() => navigate(`/scholarship/${scholarship._id}`)}
+              className="mt-auto bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition font-semibold" >
+              View Details
+            </button>
           </div>
         ))}
       </div>
