@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import { FaUser, FaClipboardList, FaUsers, FaPlusCircle, FaTasks, FaHome } from "react-icons/fa";
+import { FaUser, FaClipboardList, FaUsers, FaPlusCircle, FaTasks, FaHome, FaBars } from "react-icons/fa";
 
 import StudentDashboard from "./student/StudentDashboard";
 import MyApplications from "./student/MyApplications";
@@ -17,9 +17,11 @@ import ManageReviews from "./moderator/ManageReviews";
 
 const DashboardLayout = ({ currentUser }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const navigate = useNavigate();
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const toggleMobile = () => setIsMobileOpen(!isMobileOpen);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -52,26 +54,50 @@ const DashboardLayout = ({ currentUser }) => {
   return (
     <div className="flex min-h-screen bg-gray-100">
       <aside
-        className={`bg-white shadow-lg transition-all duration-300 p-6 flex flex-col h-full ${
-          isSidebarOpen ? "w-64" : "w-16"
-        }`} >
+        className={`fixed md:static top-0 left-0 z-40 bg-white shadow-lg transition-all duration-300 p-6 flex flex-col h-full
+        ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
+        md:translate-x-0
+        ${isSidebarOpen ? "w-64" : "w-16"}`} >
+        <div className="flex items-center justify-between mb-6">
+          <button onClick={toggleSidebar} className="btn btn-ghost hidden md:flex">
+            {isSidebarOpen ? (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            )}
+          </button>
 
-        <button onClick={toggleSidebar} className="mb-6 text-gray-600 focus:outline-none">
-          {isSidebarOpen ? "⬅" : "➡"}
-        </button>
+          <button onClick={toggleMobile} className="btn btn-ghost md:hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
 
-        <h2 className={`text-xl font-bold mb-6 ${!isSidebarOpen && "hidden"}`}> Dashboard </h2>
-        <Link to="/"  title="Home"
-          className="flex items-center gap-3 text-gray-700 hover:text-blue-600 font-medium transition-colors mb-4">
-          <FaHome /> {isSidebarOpen && "Home"}
+        <h2 className={`text-xl font-bold mb-6 ${!isSidebarOpen && "hidden"}`}>
+          Dashboard
+        </h2>
+
+        <Link to="/"
+          title="Home"
+          onClick={() => setIsMobileOpen(false)}
+          className="flex items-center gap-3 text-gray-700 hover:text-blue-600 font-medium mb-4">
+          <FaHome />
+          {isSidebarOpen && "Home"}
         </Link>
 
         <nav className="flex flex-col gap-4 flex-1">
           {links[currentUser.role]?.map((link) => (
-            <Link key={link.name}
+            <Link
+              key={link.name}
               to={link.path}
               title={link.name}
-              className="flex items-center gap-3 text-gray-700 hover:text-blue-600 font-medium transition-colors" >
+              onClick={() => setIsMobileOpen(false)}
+              className="flex items-center gap-3 text-gray-700 hover:text-blue-600 font-medium">
               {link.icon}
               {isSidebarOpen && link.name}
             </Link>
@@ -79,40 +105,54 @@ const DashboardLayout = ({ currentUser }) => {
         </nav>
       </aside>
 
-      <main className="flex-1 p-6">
-        <Routes>
-          {currentUser.role === "Student" && (
-            <>
-              <Route path="profile" element={<StudentDashboard currentUser={currentUser} />} />
-              <Route path="student/myapplication" element={<MyApplications currentUser={currentUser} />} />
-              <Route path="student/myreviews" element={<MyReviews currentUser={currentUser} />} />
-              <Route path="" element={<Navigate to="profile" replace />} />
-            </>
-          )}
+      {isMobileOpen && (
+        <div
+          onClick={toggleMobile}
+          className="fixed inset-0 bg-black bg-opacity-40 z-30 md:hidden"/>
+      )}
 
-          {currentUser.role === "Admin" && (
-            <>
-              <Route path="admin" element={<AdminDashboard />} />
-              <Route path="admin/addscholarship" element={<AddScholarship currentAdmin={currentUser} />} />
-              <Route path="admin/managescholarship" element={<ManageScholarships currentAdmin={currentUser} />} />
-              <Route path="admin/UserManagement" element={<UserManagement currentAdmin={currentUser} />} />
-              <Route path="" element={<Navigate to="admin" replace />} />
-            </>
-          )}
+      <div className="flex-1 flex flex-col">
+        <div className="md:hidden bg-white shadow px-4 py-3 flex items-center">
+          <button onClick={toggleMobile} className="btn btn-ghost text-xl">
+            <FaBars />
+          </button>
+          <span className="ml-4 font-semibold">Dashboard</span>
+        </div>
 
-          {currentUser.role === "Moderator" && (
-            <>
-              <Route path="moderator/profile" element={<ModeratorDashboard currentModerator={currentUser} />} />
-              <Route path="moderator/applications" element={<ManageApplications currentModerator={currentUser} />}/>
-              <Route path="moderator/reviews" element={<ManageReviews currentModerator={currentUser} />} />
-              <Route path="" element={<Navigate to="moderator/profile" replace />} />
-            </>
-          )}
+        <main className="flex-1 p-4 md:p-6">
+          <Routes>
+            {currentUser.role === "Student" && (
+              <>
+                <Route path="profile" element={<StudentDashboard currentUser={currentUser} />} />
+                <Route path="student/myapplication" element={<MyApplications currentUser={currentUser} />} />
+                <Route path="student/myreviews" element={<MyReviews currentUser={currentUser} />} />
+                <Route path="" element={<Navigate to="profile" replace />} />
+              </>
+            )}
 
+            {currentUser.role === "Admin" && (
+              <>
+                <Route path="admin" element={<AdminDashboard />} />
+                <Route path="admin/addscholarship" element={<AddScholarship currentAdmin={currentUser} />} />
+                <Route path="admin/managescholarship" element={<ManageScholarships currentAdmin={currentUser} />} />
+                <Route path="admin/UserManagement" element={<UserManagement currentAdmin={currentUser} />} />
+                <Route path="" element={<Navigate to="admin" replace />} />
+              </>
+            )}
 
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </main>
+            {currentUser.role === "Moderator" && (
+              <>
+                <Route path="moderator/profile" element={<ModeratorDashboard currentModerator={currentUser} />} />
+                <Route path="moderator/applications" element={<ManageApplications currentModerator={currentUser} />} />
+                <Route path="moderator/reviews" element={<ManageReviews currentModerator={currentUser} />} />
+                <Route path="" element={<Navigate to="moderator/profile" replace />} />
+              </>
+            )}
+
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </main>
+      </div>
     </div>
   );
 };
