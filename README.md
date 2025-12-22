@@ -1,16 +1,58 @@
-# React + Vite
+# ScholarStream
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+ScholarStream is a full-stack scholarship management platform designed to connect students with scholarship opportunities. It allows universities or organizations to post scholarships, and students can search and apply for them.
 
-Currently, two official plugins are available:
+## Live Links
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Client:** https://poetic-melba-a277c5.netlify.app/  
+- **Server:** https://scholarstream.onrender.com
 
-## React Compiler
+## Purpose
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Students**: Browse scholarships, view details, and apply by paying an application fee.  
+- **Moderators**: Review student applications, provide feedback, and update the application status (Pending → Processing → Completed).  
+- **Admins**: Manage users, add/edit scholarships, and view analytics.  
 
-## Expanding the ESLint configuration
+## Key Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- User authentication with role-based access (Student, Moderator, Admin)
+- Search, filter, sort, and pagination for scholarships
+- Scholarship management: Add, update, delete scholarships
+- Application management: Students can apply; moderators can review and update status
+- Reviews: Students can add and manage reviews for scholarships
+- Payment system integration (Stripe) for application fees
+- Responsive and user-friendly UI built with React and DaisyUI
+- Admin analytics with charts for quick data visualization
+
+## Technologies & Packages Used
+
+### Client
+- React
+- React Router DOM
+- Axios
+- Firebase (authentication)
+- DaisyUI & TailwindCSS (UI)
+- Framer Motion (animations)
+- React Icons
+- React Toastify (notifications)
+- Recharts (analytics charts)
+- Stripe (payments)
+
+### Server
+- Node.js & Express.js
+- MongoDB & Mongoose
+- JSON Web Tokens (JWT) for authentication
+- Bcrypt for password hashing
+- CORS & dotenv for environment management
+
+## Project Structure
+
+- **Home Page**: Hero banner, top scholarships, success stories/testimonials, contact/FAQ section  
+- **All Scholarships Page**: Search, filter, sort, and pagination with scholarship cards  
+- **Scholarship Details Page**: Detailed info with reviews and "Apply" button  
+- **Dashboard**: Role-based layouts for Student, Moderator, and Admin  
+- **Payment Pages**: Checkout, Payment Success, Payment Failed  
+- **Error Page**: Custom 404 page  
+
+
+

@@ -8,96 +8,89 @@ const AllScholarships = ({ currentUser }) => {
   const [categories, setCategories] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [countries, setCountries] = useState([]);
-  const [filtered, setFiltered] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
   const [filterSubject, setFilterSubject] = useState("");
   const [filterLocation, setFilterLocation] = useState("");
+  const [sortOption, setSortOption] = useState("");
+
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const navigate = useNavigate();
-  const token = localStorage.getItem("access-token");
+
+  const fetchScholarships = async () => {
+    setLoading(true);
+    try {
+      const params = {
+        search: search || undefined,
+        category: filterCategory || undefined,
+        subject: filterSubject || undefined,
+        country: filterLocation || undefined,
+        sort: sortOption || undefined,
+        page,
+        limit: 9,
+      };
+
+      const { data } = await axios.get(
+        "https://scholarstream.onrender.com/api/scholarships",
+        { params }
+      );
+
+      setScholarships(data.data);
+      setTotalPages(data.pagination.totalPages);
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || "Failed to fetch scholarships");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const { data } = await axios.get(
+        "https://scholarstream.onrender.com/api/scholarships/categories"
+      );
+      if (data?.data && Array.isArray(data.data)) setCategories(data.data);
+    } catch {
+      toast.error("Failed to load scholarship categories");
+    }
+  };
+
+  const fetchSubjects = async () => {
+    try {
+      const { data } = await axios.get(
+        "https://scholarstream.onrender.com/api/scholarships/subjects"
+      );
+      if (data?.data && Array.isArray(data.data)) setSubjects(data.data);
+    } catch {
+      toast.error("Failed to load subject categories");
+    }
+  };
+
+  const fetchCountries = async () => {
+    try {
+      const { data } = await axios.get(
+        "https://scholarstream.onrender.com/api/scholarships/countries"
+      );
+      if (data?.data && Array.isArray(data.data)) setCountries(data.data);
+    } catch {
+      toast.error("Failed to load countries");
+    }
+  };
 
   useEffect(() => {
-    const fetchScholarships = async () => {
-      try {
-        const { data } = await axios.get("https://scholarstream.onrender.com/api/scholarships");
-        setScholarships(data.data);
-        setFiltered(data.data);
-      } catch (error) {
-        console.error(error);
-        toast.error(error.response?.data?.message || "Failed to fetch scholarships");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const fetchCategories = async () => {
-      try {
-        const { data } = await axios.get("https://scholarstream.onrender.com/api/scholarships/categories");
-        if (data?.data && Array.isArray(data.data)) setCategories(data.data);
-      } catch {
-        toast.error("Failed to load scholarship categories");
-      }
-    };
-
-    const fetchSubjects = async () => {
-      try {
-        const { data } = await axios.get("https://scholarstream.onrender.com/api/scholarships/subjects");
-        if (data?.data && Array.isArray(data.data)) setSubjects(data.data);
-      } catch {
-        toast.error("Failed to load subject categories");
-      }
-    };
-
-    const fetchCountries = async () => {
-      try {
-        const { data } = await axios.get("https://scholarstream.onrender.com/api/scholarships/countries");
-        if (data?.data && Array.isArray(data.data)) setCountries(data.data);
-      } catch {
-        toast.error("Failed to load countries");
-      }
-    };
-
-    fetchScholarships();
     fetchCategories();
     fetchSubjects();
     fetchCountries();
   }, []);
 
   useEffect(() => {
-    let result = scholarships;
-
-    if (search.trim() !== "") {
-      result = result.filter(
-        (item) =>
-          item.scholarshipName.toLowerCase().includes(search.toLowerCase()) ||
-          item.universityName.toLowerCase().includes(search.toLowerCase()) ||
-          item.degree.toLowerCase().includes(search.toLowerCase())
-      );
-    }
-
-    if (filterCategory) {
-      result = result.filter(
-        (item) => item.scholarshipCategory.toLowerCase() === filterCategory.toLowerCase()
-      );
-    }
-
-    if (filterSubject) {
-      result = result.filter(
-        (item) => item.subjectCategory.toLowerCase() === filterSubject.toLowerCase()
-      );
-    }
-
-    if (filterLocation) {
-      result = result.filter(
-        (item) => item.universityCountry.toLowerCase() === filterLocation.toLowerCase()
-      );
-    }
-
-    setFiltered(result);
-  }, [search, filterCategory, filterSubject, filterLocation, scholarships]);
+    fetchScholarships();
+  }, [search, filterCategory, filterSubject, filterLocation, sortOption, page]);
 
   if (loading) {
     return (
@@ -111,14 +104,14 @@ const AllScholarships = ({ currentUser }) => {
     <div className="container mx-auto px-4 py-8">
       <h2 className="text-3xl font-bold mb-6 text-center">All Scholarships</h2>
 
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
+      <div className="flex flex-col md:flex-row gap-4 mb-6 flex-wrap">
         <input type="text" placeholder="Search by Scholarship / University / Degree" value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full border rounded px-4 py-2"/>
+          onChange={(e) => { setPage(1); setSearch(e.target.value); }}
+          className="w-full md:w-1/4 border rounded px-4 py-2" />
 
         <select
           value={filterCategory}
-          onChange={(e) => setFilterCategory(e.target.value)}
+          onChange={(e) => { setPage(1); setFilterCategory(e.target.value); }}
           className="border rounded px-4 py-2">
           <option value="">Scholarship Category</option>
           {categories.length > 0
@@ -128,7 +121,7 @@ const AllScholarships = ({ currentUser }) => {
 
         <select
           value={filterSubject}
-          onChange={(e) => setFilterSubject(e.target.value)}
+          onChange={(e) => { setPage(1); setFilterSubject(e.target.value); }}
           className="border rounded px-4 py-2">
           <option value="">Subject Category</option>
           {subjects.length > 0
@@ -138,20 +131,31 @@ const AllScholarships = ({ currentUser }) => {
 
         <select
           value={filterLocation}
-          onChange={(e) => setFilterLocation(e.target.value)}
+          onChange={(e) => { setPage(1); setFilterLocation(e.target.value); }}
           className="border rounded px-4 py-2">
           <option value="">Location (Country)</option>
           {countries.length > 0
             ? countries.map((country) => <option key={country} value={country}>{country}</option>)
             : <option disabled>Loading countries...</option>}
         </select>
+
+        <select
+          value={sortOption}
+          onChange={(e) => { setPage(1); setSortOption(e.target.value); }}
+          className="border rounded px-4 py-2">
+          <option value="">Sort By</option>
+          <option value="fees_asc">Application Fees (Low to High)</option>
+          <option value="fees_desc">Application Fees (High to Low)</option>
+          <option value="date_desc">Post Date (Newest First)</option>
+          <option value="date_asc">Post Date (Oldest First)</option>
+        </select>
       </div>
 
-      {filtered.length === 0 ? (
+      {scholarships.length === 0 ? (
         <p className="text-center text-gray-600">No scholarships found.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((scholarship) => (
+          {scholarships.map((scholarship) => (
             <div key={scholarship._id} className="bg-white shadow rounded p-4 flex flex-col">
               <img src={scholarship.universityImage} alt={scholarship.universityName}
                 className="w-full h-40 object-cover rounded mb-4" />
@@ -174,6 +178,31 @@ const AllScholarships = ({ currentUser }) => {
               </button>
             </div>
           ))}
+        </div>
+      )}
+
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-6 gap-2">
+          <button
+            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+            disabled={page === 1}
+            className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50">
+            Prev
+          </button>
+          {[...Array(totalPages)].map((_, idx) => (
+            <button
+              key={idx + 1}
+              onClick={() => setPage(idx + 1)}
+              className={`px-3 py-1 rounded ${page === idx + 1 ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-gray-300"}`}>
+              {idx + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={page === totalPages}
+            className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50">
+            Next
+          </button>
         </div>
       )}
     </div>
